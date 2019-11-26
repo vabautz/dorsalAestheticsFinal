@@ -1,0 +1,125 @@
+class Response extends Screen {
+  //displays prompts and collects answers
+  color backgroundColor;
+  int fontSize;
+  color fontColor;
+
+
+  //-------------------------------------------------------------------------------------CONSTRUCTOR
+  Response(color tempBackgroundColor, int tempFontSize, color tempFontColor) {
+    backgroundColor = tempBackgroundColor;
+    fontSize = tempFontSize;
+    fontColor = tempFontColor;
+  }
+
+  //-------------------------------------------------------------------------------------METHODS
+
+  //DISPLAY
+  void display(int questionNum) { //used to display questions
+    String currentQuestion = "error text"; //displays error text if no questionNum is passed on
+    background(backgroundColor);
+    
+    //display relevant buttons:
+    uButton1.display();
+    uButton2.display();
+    uButton3.display();
+    uButton4.display();
+    uButton5.display();
+    nextQButton.display();
+
+    //selects current question based on questionNum value
+    if (questionNum == 1) {
+      currentQuestion = "Statement 1: 'I found it beautiful'";   //<- subscale for prototypical aesthetic emotions of AESTHEMOS
+    }
+    if (questionNum == 2) {
+      currentQuestion = "Statement 2: 'I was impressed'";
+    }
+    if (questionNum == 3) {
+      currentQuestion = "Statement 3: 'I felt deeply moved'";
+    } 
+    if (questionNum == 4) {
+      currentQuestion = "Statement 4: 'I found it sublime'";
+    } 
+    if (questionNum == 5) {
+      currentQuestion = "Statement 5: 'I liked it'";
+    } 
+    if (questionNum == 6) {
+      currentQuestion = "Statement 6: 'It fascinated me'";
+    } 
+    if (questionNum == 7) {
+      currentQuestion = "Statement 7: 'It touched me'";
+    } 
+    if (questionNum == 8) {
+      currentQuestion = "Statement 8: 'I felt awe'";
+    } 
+
+    //displays question
+    textAlign(CENTER, CENTER);
+    textSize(fontSize);
+    fill(fontColor);
+    text(currentQuestion, width/2, height/4);
+    text("1", 640, 1400);
+    text("not at all", 640, 1600);
+    text("2", 1280, 1400);
+    text("3", 1920, 1400);
+    text("4", 2560, 1400);
+    text("5", 3200, 1400);
+    text("very", 3200, 1600);
+  }
+
+  //CHECK
+  SystemSettings check(SystemSettings settings) { //checks if all questions have been displayed...
+    if (settings.questionNum == 9) { //... if all questions have been displayed...
+      settings.fractalCounter++; //... fractalCounter is updated and next fractal can be loaded and displayed
+      settings.responseDone = true; //responseDone is updated
+    }
+    return settings;
+  }
+
+
+  //GET ANSWER
+  SystemSettings getAnswer(SystemSettings settings, Table dataTable) { //used to get answer from participant
+    
+    //get cursor location:
+    int currentXCursor = mouseX;
+    int currentYCursor = mouseY;
+    
+    //If mouse is pressed on one of the 5 blue buttons -> change pressed button to red, save answer (button number) in table
+    //Button1:
+    if (mousePressed == true && ((currentXCursor >= 590 && currentXCursor <= 690) && (currentYCursor >= 1030 && currentYCursor <= 1130))) {
+      settings.answer = 1;
+      dataTable.setInt(settings.fractalCounter-1, "q"+settings.questionNum, settings.answer);
+      pButton1.display();
+    }
+    //Button2:
+    if (mousePressed == true && ((currentXCursor >= 1230 && currentXCursor <= 1330) && (currentYCursor >= 1030 && currentYCursor <= 1130))) {
+      settings.answer = 2;
+      dataTable.setInt(settings.fractalCounter-1, "q"+settings.questionNum, settings.answer);
+      pButton2.display();
+    }
+    //Button3:
+    if (mousePressed == true && ((currentXCursor >= 1870 && currentXCursor <= 1970) && (currentYCursor >= 1030 && currentYCursor <= 1130))) {
+      settings.answer = 3;
+      dataTable.setInt(settings.fractalCounter-1, "q"+settings.questionNum, settings.answer);
+      pButton3.display();
+    }
+    //Button4:
+    if (mousePressed == true && ((currentXCursor >= 2510 && currentXCursor <= 2610) && (currentYCursor >= 1030 && currentYCursor <= 1130))) {
+      settings.answer = 4;
+      dataTable.setInt(settings.fractalCounter-1, "q"+settings.questionNum, settings.answer);
+      pButton4.display();
+    }
+    //Button5:
+    if (mousePressed == true && ((currentXCursor >= 3150 && currentXCursor <= 3250) && (currentYCursor >= 1030 && currentYCursor <= 1130))) {
+      settings.answer = 5;
+      dataTable.setInt(settings.fractalCounter-1, "q"+settings.questionNum, settings.answer);
+      pButton5.display();
+    }
+    
+    //if forward button is pressed, questionNum is updated and next question can be displayed:
+    if (mousePressed == true && ((currentXCursor >= 1820 && currentXCursor <= 2020) && (currentYCursor >= 1600 && currentYCursor <= 1800))) {
+      settings.questionNum++;
+    }
+    return settings;
+  }
+}
