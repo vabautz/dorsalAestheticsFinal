@@ -1,0 +1,23 @@
+class SystemSettings extends SystemObject {
+  //class used to store important system settings
+  int state;
+  int fractalCounter;
+  int frameCounter;
+  boolean instructionsDone;
+  boolean responseDone;
+  int questionNum; 
+  int answer;
+  int instructionsNum;
+
+
+  SystemSettings(int tempState, int tempFractalCounter, int tempFrameCounter, boolean tempInstructionsDone, boolean tempResponseDone, int tempQuestionNum, int tempAnswer, int tempInstructionsNum) {
+    state = tempState;
+    fractalCounter = tempFractalCounter;
+    frameCounter = tempFrameCounter;
+    instructionsDone = tempInstructionsDone;
+    responseDone = tempResponseDone;
+    questionNum = tempQuestionNum; 
+    answer = tempAnswer;
+    instructionsNum = tempInstructionsNum;
+  }
+}
