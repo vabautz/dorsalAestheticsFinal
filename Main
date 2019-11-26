@@ -1,0 +1,292 @@
+
+///////////INSERT PARTICPANT NUMBER HERE:
+int participantNum = 1;   //default = 0;
+/////////////////////////////////////////
+
+
+//Global variables
+Instructions theInstructions = new Instructions(0, 100, 255); 
+LoadingMessage theMessage = new LoadingMessage(0, 100, 255);
+boolean instructionsDone = false;
+boolean responseDone = false;
+int messageDone = 0;
+int fractalCounter = 1;   //used to count up to 3 fractals 
+int frameCounter = 1;    //used to count up to 72 frames (3seconds at 24fps)
+int state = 1;    //keeps track state/phase
+int instructionsNum = 1;    //keeps track of instruction display during instruction phase
+int questionNum = 1;    //keeps track of question number during response phase
+int answer = 0;    //gets answer from participant
+Table dataTable;    //saves participant responses
+SystemSettings settings = new SystemSettings(state, fractalCounter, frameCounter, instructionsDone, responseDone, questionNum, answer, instructionsNum); //keeps track of all important settings/states
+int finalCount = 0; //used to display final message for 300 frames
+PImage[] fractals = new PImage[120]; //used to load individual frames that are located within subfolders of the sketch folder
+PImage fractal; //used to display current frame
+
+//create buttons (used to get participant answers and to allow for navigation through system) --> [POLYMORPHISM]
+Button uButton1 = new UnpressedButton(640, 1080);
+Button uButton2 = new UnpressedButton(1280, 1080);
+Button uButton3 = new UnpressedButton(1920, 1080);
+Button uButton4 = new UnpressedButton(2560, 1080);
+Button uButton5 = new UnpressedButton(3200, 1080);
+
+Button pButton1 = new PressedButton(640, 1080);
+Button pButton2 = new PressedButton(1280, 1080);
+Button pButton3 = new PressedButton(1920, 1080);
+Button pButton4 = new PressedButton(2560, 1080);
+Button pButton5 = new PressedButton(3200, 1080);
+
+Button forward = new ForwardButton(3240, 2000); //200
+Button back = new BackButton(600, 2000); //200
+Button start = new StartButton(1920, 1080); //400
+Button nextQButton = new ForwardButton(1920, 1700);
+
+
+
+
+
+//------------------------------------------------------------------------------------SETUP
+void setup() {
+  fullScreen();
+  background(0);
+  frameRate(24); //24 fps = 120 for 5secs
+
+  //message to be displayed while setup takes place:
+  String loadingInfo1 = "Please Wait";
+  String loadingInfo2 = "System Loading...";
+
+  textAlign(CENTER, CENTER);
+  textSize(100);
+  fill(255);
+  text(loadingInfo1, width/2, height/2-100);
+  text(loadingInfo2, width/2, height/2+100);
+
+
+  //initiate table to save answers
+  dataTable = new Table();
+  dataTable.addColumn("q1", Table.INT);
+  dataTable.addColumn("q2", Table.INT);
+  dataTable.addColumn("q3", Table.INT);
+  dataTable.addColumn("q4", Table.INT);
+  dataTable.addColumn("q5", Table.INT);
+  dataTable.addColumn("q6", Table.INT);
+  dataTable.addColumn("q7", Table.INT);
+  dataTable.addColumn("q8", Table.INT);
+}
+
+
+
+
+
+
+//-------------------------------------------------------------------------------------DRAW
+void draw() {
+  // int a = millis(); //used to check framerate
+
+  //first state (INSTRUCTIONS)
+  if (settings.state == 1) { 
+    
+    //cursor settings: (symbol changes from arrow to hand when cursor is on buttons)
+    int currentXCursor = mouseX;
+    int currentYCursor = mouseY;
+    if (settings.instructionsNum == 1) {
+      if ((currentXCursor >= 3140 && currentXCursor <= 3340) && (currentYCursor >= 1900 && currentYCursor <= 2100)) { //forward button location
+        cursor(HAND);
+      } else {
+        cursor(ARROW);
+      }
+    }
+    if (settings.instructionsNum == 2) {
+      if (((currentXCursor >= 1720 && currentXCursor <= 2120) && (currentYCursor >= 880 && currentYCursor <= 1280)) || ((currentXCursor >= 500 && currentXCursor <= 700) && (currentYCursor >= 1900 && currentYCursor <= 2100))) { //start button location
+        cursor(HAND);
+      } else {
+        cursor(ARROW);
+      }
+    }
+    if (settings.instructionsNum == 3) {
+      noCursor();
+    }
+    
+    //method used to display instructions:
+    settings = instructionPhase(theInstructions, settings);
+  }
+  
+
+  //second state (FRACTALS)
+  if (settings.state == 2) { 
+    
+    //cursor setting:
+    noCursor();
+    
+    //resetting of settings:
+    settings.responseDone = false; //reset responseDone for next fractal
+    
+    //load next set of fractal images if required
+    if (settings.frameCounter == 1) { //if first frame of fractal...
+      loadingPhase(settings);   //... load new set of fractals
+    }
+    
+    //methods used to display fractal images:
+    settings = fractalPhase(settings);
+  }
+
+
+  //third state (QUESTIONS)
+  if (settings.state == 3) {
+    
+    //cursor settings:
+    int currentXCursor = mouseX;
+    int currentYCursor = mouseY;
+    if (((currentXCursor >= 590 && currentXCursor <= 690) && (currentYCursor >= 1030 && currentYCursor <= 1130)) ||
+      ((currentXCursor >= 1230 && currentXCursor <= 1330) && (currentYCursor >= 1030 && currentYCursor <= 1130)) ||
+      ((currentXCursor >= 1870 && currentXCursor <= 1970) && (currentYCursor >= 1030 && currentYCursor <= 1130)) ||
+      ((currentXCursor >= 2510 && currentXCursor <= 2610) && (currentYCursor >= 1030 && currentYCursor <= 1130)) ||
+      ((currentXCursor >= 3150 && currentXCursor <= 3250) && (currentYCursor >= 1030 && currentYCursor <= 1130)) ||
+      ((currentXCursor >= 1820 && currentXCursor <= 2020) && (currentYCursor >= 1600 && currentYCursor <= 1800))) {
+      cursor(HAND);
+    } else {
+      cursor(ARROW);
+    }
+
+    //method used to display response screen:
+    settings = responsePhase(settings, dataTable);
+  }
+
+
+  //fourth state (FINAL SCREEN)
+  if (settings.state == 4) {  
+    
+    //cursor settings:
+    noCursor();
+    
+    //method used to display final screen:
+    finalePhase(dataTable);
+    //display of final screen is stopped after 300 frames:
+    finalCount++;
+    if (finalCount == 300) {
+      background(0);
+      noLoop();
+    }
+  }
+
+  //int b = millis();
+  //println(b-a);
+}
+
+
+
+
+//--------------------------------------------------------------------------------------METHODS
+
+//INSTRUCTION PHASE (STATE 1)
+SystemSettings instructionPhase(Instructions theInstructions, SystemSettings settings) {
+  settings.instructionsNum = theInstructions.display(settings.instructionsNum);
+  settings.instructionsDone = theInstructions.end(settings);
+  settings.instructionsNum = theInstructions.progress(settings);
+
+  //state update:
+  if (settings.instructionsDone == true) { //if all instructions have been displayed and start button was pressed: ...
+    settings.state = 2;        //... move to next state (=fractal phase)
+    return settings;
+  } else {
+    settings.state = 1; //if not all instructions have been displayed/start button was not pressed, then remain in current state 1
+    return settings;
+  }
+}
+
+
+
+//LOADING PHASE (STATE 2)
+void loadingPhase(SystemSettings settings) {
+  
+  //display loading warning message to participant while images are loaded
+  theMessage.display();
+  
+  //loading of appropriate image set depending on current state of system
+  if (settings.fractalCounter == 1) { //if fractalCounter is 1: first set of images is loaded into image array
+    for (int i = 0; i<72; i++) {
+      int index = i+1;
+      fractals[i] = loadImagex("Fractal1/fractal1 ("+ index +").jpg");
+    }
+  }
+  if (settings.fractalCounter == 2) { //if fractalCounter is 2: second set of images is loaded into image array
+    for (int i = 0; i<72; i++) {
+      int index = i+1;
+      fractals[i] = loadImagex("Fractal2/fractal2 ("+ index +").jpg");
+    }
+  }
+  if (settings.fractalCounter == 3) { //if fractalCounter is 3: third set of images is loaded into image array
+    for (int i = 0; i<72; i++) {
+      int index = i+1;
+      fractals[i] = loadImagex("Fractal3/fractal3 ("+ index +").jpg");
+    }
+  }
+}
+
+
+
+//FRACTALPHASE (STATE 2)
+SystemSettings fractalPhase(SystemSettings settings) {
+  
+  //resetting of appropriate variables:
+  settings.responseDone = false; //reset responseDone for next fractal
+
+  //select current image/frame from image array based on frameCounter + display
+  fractal = fractals[settings.frameCounter];
+  imageMode(CENTER);
+  image(fractal, 3840/2, 2160/2);
+  
+  
+  settings.frameCounter++; //update frameCounter for next frame
+
+  //state update:
+  if (settings.frameCounter == 72) { //if all 72 frames are displayed:...
+    settings.state = 3; //...move on to next state/phase (response phase)
+    return settings;
+  } else {
+    settings.state = 2; //else: remain in current state to display next frame
+    return settings;
+  }
+}
+
+//RESPONSEPHASE (STATE 3)
+SystemSettings responsePhase(SystemSettings settings, Table dataTable) {
+  
+  //resetting of appropriate variables:
+  settings.frameCounter = 1; //reset frameCounter
+  
+  //create response screen
+  Response theResponse = new Response(0, 100, 255); 
+
+  theResponse.display(settings.questionNum); //display response screen
+  settings = theResponse.getAnswer(settings, dataTable); //getAnswer from participant on rating scale
+
+  settings = theResponse.check(settings); //check if all questions/scales have been displayed
+
+  //state update:
+  if (settings.responseDone == false) { //if not all responses have been collected:...
+    settings.state = 3; //...remain in state 3 
+    return settings;
+  }
+  if (settings.responseDone == true && settings.fractalCounter == 4) { //if all responses have been collected for last fractal & all fractal sets have been displayed: ...
+    settings.state = 4; //...move to final phase/state 4
+    return settings;
+  } else { //else: ...
+    settings.state = 2; // ... return to state 2 to load and display the next set of fractal images
+    settings.questionNum = 1; //resets questionNum to 1 for next fractal
+    theMessage.display(); //warns participants about loading time of next fractal
+    return settings;
+  }
+}
+
+
+
+//FINALEPHASE (STATE 4)
+void finalePhase(Table dataTable) {
+  
+  //saves table that contains all participant responses as csv file 
+  saveTable(dataTable, participantNum+".csv"); // save data file in local directory (participant number = file name)   --> [SAVING FILE]
+  
+  //displays final message to inform participants of the end of the experiment
+  Finale theFinale = new Finale(0, 100, 255); 
+  theFinale.display();
+}
