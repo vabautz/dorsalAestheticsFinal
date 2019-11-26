@@ -1,0 +1,49 @@
+import java.awt.Toolkit;  // --> [JAVA LIBRARY]
+import java.awt.Image;
+//source of this code: https://forum.processing.org/one/topic/snippet-crazy-fast-image-loading.html
+
+//alternative to regular loadImage() which allows images to be loaded twice as fast on average
+
+PImage loadImagex(String inFile) {
+  if (inFile.toLowerCase().endsWith(".jpg") || inFile.toLowerCase().endsWith(".jpeg") ||  inFile.toLowerCase().endsWith(".png")) {
+    //http://www.java-tips.org/java-se-tips/java.awt.image/how-to-use-pixelgrabber-class-to-acquire-pixel-data-from-an-image-o.html
+    byte[] bytes   = loadBytes(inFile);
+    if (bytes != null) {
+      Image image = Toolkit.getDefaultToolkit().createImage(bytes);
+      int [] data= new int [1];
+      PImage retval = null;
+      try {
+        java.awt.image.PixelGrabber grabber =
+          new java.awt.image.PixelGrabber(image, 0, 0, -1, -1, false);
+        if (grabber.grabPixels()) {
+          int w = grabber.getWidth();
+          int h = grabber.getHeight();
+          if (inFile.toLowerCase().endsWith(".jpg") || inFile.toLowerCase().endsWith(".jpeg") ) {
+            retval = createImage(w, h, RGB);
+          } else {
+            retval = createImage(w, h, ARGB);
+          }
+          if (grabber.getPixels() instanceof byte[]) {
+            // Process greyscale image ...
+            byte[] datax = (byte[]) grabber.getPixels();
+            arraycopy(datax, retval.pixels);
+          } else {
+            // Process Color image
+            data = (int[]) grabber.getPixels();
+            arraycopy(data, retval.pixels);
+          }
+        }
+      }
+      catch (InterruptedException e1) {
+        System.err.println("Problem loading loadImagex, defaulting to loadImage().  Error: " + e1);
+        return loadImage(inFile);
+      }
+      if (retval != null) {
+        return retval;
+      }
+      return loadImage(inFile);
+    }
+    return loadImage(inFile);
+  }
+  return loadImage(inFile);
+}
