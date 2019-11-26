@@ -1,0 +1,120 @@
+abstract class Button extends SystemObject {  // -->[ABSTRACTION]
+  int xPos;
+  int yPos;
+
+
+Button(int tempXpos, int tempYpos) {
+  xPos = tempXpos;
+  yPos = tempYpos;
+}
+
+void display() {
+  fill(255);
+  ellipse(xPos, yPos, 50, 50); 
+}
+
+void hidden() {
+}
+
+}
+//__________________________________________________________________________________________
+
+class UnpressedButton extends Button {
+  
+  UnpressedButton(int tempXpos, int tempYpos) {
+  super(tempXpos, tempYpos); }         // --> [INHERITANCE]
+  
+
+void display() { //load & display blue button     // --> [OVERRIDING of inherited display() method]
+  imageMode(CENTER);
+  PImage button;
+  button = loadImage("blueButton.png");     // --> [LOADING FILE]
+  button.resize(100, 100);
+  image(button, xPos, yPos);
+}
+
+void hidden() { //removes button
+}
+}
+
+
+//______________________________________________________________________________________________
+
+
+class PressedButton extends Button {
+  
+  PressedButton(int tempXpos, int tempYpos) {
+  super(tempXpos, tempYpos); }
+
+
+void display() { //load & display red button
+  imageMode(CENTER);
+  PImage button;
+  button = loadImage("redButton.png");
+  button.resize(100, 100);
+  image(button, xPos, yPos);
+}
+
+void hidden() { //removes button
+
+}
+}
+//__________________________________________________________________________________________________
+class StartButton extends Button {
+  
+  StartButton(int tempXpos, int tempYpos) {
+  super(tempXpos, tempYpos); }
+
+
+void display() { //load & display start button
+  imageMode(CENTER);
+  PImage button;
+  button = loadImage("startButton.png");
+  button.resize(400, 400);
+  image(button, xPos, yPos);
+}
+
+void hidden() { //removes button
+
+}
+}
+
+//__________________________________________________________________________________________________
+class BackButton extends Button {
+  
+  BackButton(int tempXpos, int tempYpos) {
+  super(tempXpos, tempYpos); }
+
+
+void display() { //load & display back button
+  imageMode(CENTER);
+  PImage button;
+  button = loadImage("backButton.png");
+  button.resize(200, 200);
+  image(button, xPos, yPos);
+}
+
+void hidden() { //removes button
+
+}
+}
+
+//__________________________________________________________________________________________________
+class ForwardButton extends Button {
+  
+  ForwardButton(int tempXpos, int tempYpos) {
+  super(tempXpos, tempYpos); }
+
+
+void display() { //load & display forward button
+  imageMode(CENTER);
+  PImage button;
+  button = loadImage("forwardButton.png");
+  button.resize(200, 200);
+  image(button, xPos, yPos);
+}
+
+void hidden() { //removes button
+
+}
+}
