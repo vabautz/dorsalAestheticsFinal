@@ -1,0 +1,65 @@
+class LoadingMessage extends Screen {
+  //informs participant of waiting time until images are loaded
+  color backgroundColor;
+  int fontSize;
+  color fontColor;
+
+  
+//------------------------------------------------------------------------------------CONSTRUCTOR
+  LoadingMessage(color tempBackgroundColor, int tempFontSize, color tempFontColor) {
+    backgroundColor = tempBackgroundColor;
+    fontSize = tempFontSize;
+    fontColor = tempFontColor;
+  }
+  
+  
+//------------------------------------------------------------------------------------METHODS
+
+  //DISPLAY
+  void display() {
+    String loadingInfo1 = "Please Wait";
+    String loadingInfo2 = "Next fractal is loading...";
+    
+    background(this.backgroundColor);
+  
+    textAlign(CENTER, CENTER);
+    textSize(this.fontSize);
+    fill(this.fontColor);
+    text(loadingInfo1, width/2, height/2-100);
+    text(loadingInfo2, width/2, height/2+100);
+    
+  }
+  
+  int display(int messageDone) {          // --> [OVERLOADING - 3 DIFFERENT DISPLAY METHODS]
+    String loadingInfo1 = "Please Wait";
+    String loadingInfo2 = "Next fractal is loading...";
+    
+    background(this.backgroundColor);
+  
+    textAlign(CENTER, CENTER);
+    textSize(this.fontSize);
+    fill(this.fontColor);
+    text(loadingInfo1, width/2, height/2-100);
+    text(loadingInfo2, width/2, height/2+100);
+    messageDone = 1;
+    return messageDone;
+  }
+  
+  
+  int display(int messageDone, int delayNum) {
+    String loadingInfo1 = "Please Wait";
+    String loadingInfo2 = "Next fractal is loading...";
+    
+    background(this.backgroundColor);
+  
+    textAlign(CENTER, CENTER);
+    textSize(this.fontSize);
+    fill(this.fontColor);
+    text(loadingInfo1, width/2, height/2-100);
+    text(loadingInfo2, width/2, height/2+100);
+    delay(delayNum);
+    
+    messageDone = 1;
+    return messageDone;
+  }
+}
