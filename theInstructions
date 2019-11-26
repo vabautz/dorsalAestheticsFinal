@@ -1,0 +1,116 @@
+class Instructions extends Screen {
+  //provides participant with instructions at the beginning of experiment
+  color backgroundColor;
+  int fontSize;
+  color fontColor;
+
+
+
+  //---------------------------------------------------------------------------------------CONSTRUCTOR
+  Instructions(color tempBackgroundColor, int tempFontSize, color tempFontColor) {
+    backgroundColor = tempBackgroundColor;
+    fontSize = tempFontSize;
+    fontColor = tempFontColor;
+  }
+
+  //----------------------------------------------------------------------------------------METHODS
+
+
+  //DISPLAY
+  int display(int instructionsNum) {
+    background(this.backgroundColor);
+    //initiates instruction Strings
+    String currentInstructions1 = " ";
+    String currentInstructions2 = " ";
+    String currentInstructions3 = " ";
+    String currentInstructions4 = " ";
+    String currentInstructions5 = " ";
+    String currentInstructions6 = " ";
+
+
+    if (instructionsNum == 1) {
+      forward.display();
+      currentInstructions1 = "Instructions:";
+      currentInstructions2 = "In this study you will be shown different visuals.";
+      currentInstructions3 = "Please watch them carefully.";
+      currentInstructions4 = "After each of the visuals you will be shown a number of scales.";
+      currentInstructions5 = "Please rate how much you agree with the statements.";
+      currentInstructions6 = "Press button to continue.";
+    }
+    
+    if (instructionsNum == 2) {
+      back.display();
+      start.display();
+      currentInstructions1 = " ";
+      currentInstructions2 = " ";
+      currentInstructions3 = "Press button to start";
+      currentInstructions4 = " ";
+      currentInstructions5 = " ";
+      currentInstructions6 = " ";
+    }
+    
+    if (instructionsNum == 3) {
+      currentInstructions1 = " ";
+      currentInstructions2 = "Please Wait";
+      currentInstructions3 = "First fractal is loading...";
+      currentInstructions4 = " ";
+      currentInstructions5 = " ";
+      currentInstructions6 = " ";
+    }
+
+    //displays instructions:
+    if (instructionsNum == 2) {
+      textAlign(CENTER);
+      text(currentInstructions2, 500, 600);
+      text(currentInstructions3, 1920, 750);
+    } 
+    if (instructionsNum == 3) {
+      textAlign(CENTER);
+      text(currentInstructions2, width/2, height/2-100);
+      text(currentInstructions3, width/2, height/2+100);
+    }
+    if (instructionsNum ==1) {
+      textAlign(LEFT);
+      text(currentInstructions2, 500, 600);
+      text(currentInstructions3, 500, 900);
+    }
+    
+    textSize(this.fontSize);
+    fill(this.fontColor);
+    text(currentInstructions1, 500, 300);
+    text(currentInstructions4, 500, 1200);
+    text(currentInstructions5, 500, 1500);
+    text(currentInstructions6, 500, 1800);
+    
+    return instructionsNum;
+  }
+
+  int progress(SystemSettings settings) {
+    int currentXCursor = mouseX;
+    int currentYCursor = mouseY;
+
+    if ((mousePressed == true && settings.instructionsNum == 1) && ((currentXCursor >= 3140 && currentXCursor <= 3340) && (currentYCursor >= 1900 && currentYCursor <= 2100))) { //<----- location of forward button
+      settings.instructionsNum = 2;
+    }
+
+    if ((mousePressed == true && settings.instructionsNum == 2) && ((currentXCursor >= 500 && currentXCursor <= 700) && (currentYCursor >= 1900 && currentYCursor <= 2100))) { //<----- location of back button
+      settings.instructionsNum = 1;
+    }
+    if (settings.instructionsNum == 3) {
+      settings.instructionsNum++;
+    }
+    if ((mousePressed == true && settings.instructionsNum == 2) && ((currentXCursor >= 1720 && currentXCursor <= 2120) && (currentYCursor >= 880 && currentYCursor <= 1280))) { //if start is pressed 
+      settings.instructionsNum = 3;
+    } 
+    
+    return settings.instructionsNum;
+  }
+  
+  //END
+  boolean end(SystemSettings settings) {  
+    if (settings.instructionsNum == 4) { 
+      settings.instructionsDone = true;
+    }
+    return settings.instructionsDone;
+  }
+}
