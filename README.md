@@ -10,8 +10,7 @@ researchers are able to use any program to generate the stimuli. As long as the 
 and are located within the appropriate subfolders, the system is able to load them.
 # NOTE:
 in the current version there is a limit of 3 stimuli with 72 frames each.
-We have added some sample fractal imagery to the repository to be used as stimuli. These were created by us, and can easily be exchanged 
-as desired by others.
+Sample stimuli imagery are not provided. To see an example, watch the video demo below.
 
 # OUTPUT DATA:
 the output data (=participant responses) are saved in a csv file. The file name will be the participant number. 
